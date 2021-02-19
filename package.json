@@ -1,0 +1,18 @@
+{
+  "name": "iplocation",
+  "version": "1.0.0",
+  "description": "connect ip to Location",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"nodemon index.js"
+  },
+  "author": "Joshua T Chukwu",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "g": "^2.0.1",
+    "mongoose": "^5.11.14",
+    "nodemon": "^2.0.7"
+  }
+}
