@@ -1,14 +1,19 @@
 const { Int32 } = require('bson');
 const mongoose = require('mongoose');
+require('dotenv').config();
+const fs = require('fs');
 //const { async } = require('q');
 
 
-mongoose.connect('mongodb+srv://Joshua:HtXT8uAijusaA68@cluster0.iemkw.mongodb.net/MY_IP?retryWrites=true&w=majority',{useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MongoUrl,{useNewUrlParser: true, useUnifiedTopology: true });
 const courseSchema = new mongoose.Schema({
     Range1: Number,
     Range2: Number,
     CountryCode: String,
-    Country: String
+    Country: String,
+    CurrencyCode: String,
+    CurrencySymbol: String,
+    CurrencyName: String
 })
 const IPAddress = mongoose.model('IPLocation', courseSchema,'IPLocation');
 async function Locate(IP){
@@ -18,8 +23,12 @@ async function Locate(IP){
         "Range1": 2845786112,
         "Range2": 2845802495,
         "CountryCode": "NG",
-        "Country": "Nigeria"
+        "Country": "Nigeria",
+        "CurrencyCode":"NGN",
+        "CurrencySymbol":"₦",
+        "CurrencyName":"Nigerian naira"
     };
+
     const IPaddress = await IPAddress.findOne().where('Range1').lte(number).and([{ Range2: { $gte: number}}]);
     if(!IPaddress){
         return genres;
@@ -28,6 +37,24 @@ async function Locate(IP){
     return IPaddress;
 }
     //console.log(IPaddress);
+}
+async function updateDb(){
+    try{
+    const dir = "currencysymbol.json";
+    const raw = fs.readFileSync(dir,'utf8');
+    const data =await JSON.parse(raw);
+
+await IPAddress.updateMany({CurrencyCode:"EUR"});
+        
+    }
+    catch(e) {
+        console.log('Catch an error: ', e)
+     
+    }
+
+
+
+  
 }
 //Locate('197.210.64.210')
 function GetLocation(IPaddresses){
@@ -68,3 +95,4 @@ return parseInt(str,2)
 }
 
 module.exports.Locate= Locate;
+module.exports.updateDb =updateDb;
