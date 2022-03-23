@@ -14,8 +14,18 @@ app.get('/api/location/:id', async(req, res) =>{
 app.get('/api/ipAddress', async(req, res) =>{
   
    
+  let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  ip = ip.toString().replace('::ffff:', '');  
+  res.send({ip:ip});
+});
+app.get('/api/Locate/NoIP', async(req, res) =>{
   
-res.send(req.socket.remoteAddress);
+   
+  let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  ip = ip.toString().replace('::ffff:', '');  
+  const result = await IPLocate.Locate(ip);
+  
+  res.send(result);
 });
 const port = process.env.PORT || 3000;
 
