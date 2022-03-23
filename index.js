@@ -4,13 +4,18 @@ const app = express();
 require('dotenv').config();
 
 
-app.get('/api/:id', async(req, res) =>{
-    console.log(req.params.id)
-    const rev = await IPLocate.updateDb();
-     console.log(rev);
+app.get('/api/location/:id', async(req, res) =>{
+  
+   
      const result = await IPLocate.Locate(req.params.id);
-     console.log(result)
+  
   res.send(result);
+});
+app.get('/api/ipAddress', async(req, res) =>{
+  
+   
+  
+res.send(req.socket.remoteAddress);
 });
 const port = process.env.PORT || 3000;
 

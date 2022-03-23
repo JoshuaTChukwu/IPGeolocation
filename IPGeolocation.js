@@ -2,6 +2,7 @@ const { Int32 } = require('bson');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const fs = require('fs');
+const { convert } = require('html-to-text');
 //const { async } = require('q');
 
 
@@ -10,16 +11,23 @@ const courseSchema = new mongoose.Schema({
     Range1: Number,
     Range2: Number,
     CountryCode: String,
-    Country: String,
+    Country: String
+    
+});
+const currencySchema = new mongoose.Schema({
+    CountryCode: String,
     CurrencyCode: String,
     CurrencySymbol: String,
-    CurrencyName: String
+    Currency: String,
+    IsHTMLSymbol:Boolean
+ 
 })
 const IPAddress = mongoose.model('IPLocation', courseSchema,'IPLocation');
+const Currency = mongoose.model('Currency ',currencySchema,'Currency');
 async function Locate(IP){
     var number =  GetLocation(IP)
     const genres ={
-        "_id": "602f9212dc38fe384856bf9c",
+        
         "Range1": 2845786112,
         "Range2": 2845802495,
         "CountryCode": "NG",
@@ -34,28 +42,42 @@ async function Locate(IP){
         return genres;
     }
     else{
-    return IPaddress;
+        var currency = await Currency.findOne({CountryCode: IPaddress.CountryCode});
+       if(!currency){
+           return {
+            Range1:IPaddress.Range1,
+            Range2: IPaddress.Range2,
+            CountryCode: IPaddress.CountryCode,
+            Country: IPaddress.Country,
+            CurrencyCode:"",
+            CurrencySymbol:"",
+            CurrencyName: ""
+
+           }
+       }
+   else {
+       if(currency.IsHTMLSymbol = true){
+           var ans = convert(currency.CurrencySymbol,{
+            wordwrap: 130
+          });
+         
+        currency.CurrencySymbol =ans; 
+       }
+       return  {
+        Range1:IPaddress.Range1,
+        Range2: IPaddress.Range2,
+        CountryCode: IPaddress.CountryCode,
+        Country: IPaddress.Country,
+        CurrencyCode:currency.CurrencyCode,
+        CurrencySymbol:currency.CurrencySymbol,
+        CurrencyName: currency.Currency
+
+       }
+   }
 }
     //console.log(IPaddress);
 }
-async function updateDb(){
-    try{
-    const dir = "currencysymbol.json";
-    const raw = fs.readFileSync(dir,'utf8');
-    const data =await JSON.parse(raw);
 
-await IPAddress.updateMany({CurrencyCode:"EUR"});
-        
-    }
-    catch(e) {
-        console.log('Catch an error: ', e)
-     
-    }
-
-
-
-  
-}
 //Locate('197.210.64.210')
 function GetLocation(IPaddresses){
     
@@ -95,4 +117,3 @@ return parseInt(str,2)
 }
 
 module.exports.Locate= Locate;
-module.exports.updateDb =updateDb;
