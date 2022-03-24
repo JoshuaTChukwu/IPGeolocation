@@ -18,7 +18,7 @@ app.get('/api/ipAddress', async(req, res) =>{
   ip = ip.toString().replace('::ffff:', '');  
   res.send({ip:ip});
 });
-app.get('/api/location/noip', async(req, res) =>{
+app.get('/api/locations/noip', async(req, res) =>{
   
    
   let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
