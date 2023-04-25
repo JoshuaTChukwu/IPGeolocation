@@ -21,6 +21,10 @@ const currencySchema = new mongoose.Schema({
     Currency: String,
     IsHTMLSymbol:Boolean
  
+});
+const countrySchema = new mongoose.Schema({
+    CountryCode: String,
+    Country: String,
 })
 const IPAddress = mongoose.model('IPLocation', courseSchema,'IPLocation');
 const Currency = mongoose.model('Currency ',currencySchema,'Currency');
@@ -76,6 +80,20 @@ async function Locate(IP){
    }
 }
     //console.log(IPaddress);
+}
+async function getAllCountry(){
+     await IPAddress.aggregate([{$group:{
+        Country:'$Country',
+        Code:'$CountryCode'
+    }}], function (err, result) {
+        if(result){
+            return result;
+            console.log(result);
+        }
+        else{
+            return [];
+        }
+    })
 }
 
 //Locate('197.210.64.210')
