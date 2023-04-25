@@ -14,6 +14,18 @@ const courseSchema = new mongoose.Schema({
     Country: String
     
 });
+var citySchema = new mongoose.Schema({
+    city: String,
+    city_ascii:String,
+    lat:String,
+    lng:String,
+    country:String,
+    iso2:String,
+    iso3:String,
+    admin_name:String,
+    capital:String,
+    population:String
+})
 const currencySchema = new mongoose.Schema({
     CountryCode: String,
     CurrencyCode: String,
@@ -28,6 +40,7 @@ const countrySchema = new mongoose.Schema({
 })
 const IPAddress = mongoose.model('IPLocation', courseSchema,'IPLocation');
 const Currency = mongoose.model('Currency ',currencySchema,'Currency');
+const City = mongoose.model('Cities',citySchema,'Cities');
 async function Locate(IP){
     var number =  GetLocation(IP)
     const genres ={
@@ -82,10 +95,19 @@ async function Locate(IP){
     //console.log(IPaddress);
 }
 async function getAllCountry(){
-   var item =  await IPAddress.aggregate([{$group:{
+   var item =  await IPAddress.aggregate([{ $group:{
         _id: "$Country",
-        Code:{'$first':'$CountryCode'}
-    }}], function (err, result) {
+        Code:{'$first':'$CountryCode'},
+        
+    }},
+    {
+        $lookup:{
+            from:"Currency",
+            localField:"Code",
+            foreignField:"CountryCode",
+            as:"test"
+        }
+    }], function (err, result) {
         if(result){
             return result;
             console.log(result);
@@ -94,8 +116,43 @@ async function getAllCountry(){
             return [];
         }
     })
-    console.log(item);
-    return item;
+    const res = item.map((a)=>  {
+      return {
+        Country:a._id,
+      CountryCode:a.Code,
+      CurrencySymbol: getsymbol(a.test[0]),
+      CurrencyCode:a.test[0]?.CurrencyCode??"",
+      CurrencyName: a.test[0]?.Currency??""
+      }
+    });
+    console.log(res);
+    return res;
+}
+function getsymbol(data){
+    if(data){
+        if(data.IsHTMLSymbol ==true){
+            return convert(data.CurrencySymbol,{
+                wordwrap: 130
+              });
+        }
+       return data.CurrencySymbol; 
+    }
+return ""
+}
+async function getCityByCountry(code){
+    var cities = await City.find({
+        iso2:code
+    });
+    const fomatedCity = cities.map((city)=>{
+        return {
+            CityName:city.city,
+            CountryName: city.country,
+            CountryCode :code,
+            Population : city.population
+        }
+    });
+   
+    return fomatedCity;
 }
 
 //Locate('197.210.64.210')
@@ -137,7 +194,8 @@ return parseInt(str,2)
 }
 const IPModule = {
     Locate,
-    getAllCountry
+    getAllCountry,
+    getCityByCountry
 }
 
 module.exports.IPModule= IPModule;

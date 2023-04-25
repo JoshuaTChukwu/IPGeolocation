@@ -32,6 +32,10 @@ app.get('/api/countries/get/all', async(req,res)=>{
   let result = await IPLocate.IPModule.getAllCountry();
   res.send(result);
 });
+app.get('/api/city/get/all/by/country/:code', async(req,res)=>{
+  let result = await IPLocate.IPModule.getCityByCountry(req.params.code);
+  res.send(result);
+});
 app.get('/api/universities/get/all', async(req,res)=>{
   let result = await University.UniversityModule.getAllUniversities();
   res.send(result);
