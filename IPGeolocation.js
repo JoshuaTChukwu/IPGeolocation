@@ -82,9 +82,9 @@ async function Locate(IP){
     //console.log(IPaddress);
 }
 async function getAllCountry(){
-     await IPAddress.aggregate([{$group:{
-        Country:'$Country',
-        Code:'$CountryCode'
+   var item =  await IPAddress.aggregate([{$group:{
+        _id: "$Country",
+        Code:{'$first':'$CountryCode'}
     }}], function (err, result) {
         if(result){
             return result;
@@ -94,6 +94,8 @@ async function getAllCountry(){
             return [];
         }
     })
+    console.log(item);
+    return item;
 }
 
 //Locate('197.210.64.210')
@@ -133,5 +135,9 @@ function dec_to_bin(bstr) {
 function bin_to_dec(str){
 return parseInt(str,2)
 }
+const IPModule = {
+    Locate,
+    getAllCountry
+}
 
-module.exports.Locate= Locate;
+module.exports.IPModule= IPModule;

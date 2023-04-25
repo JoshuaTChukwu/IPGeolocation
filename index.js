@@ -8,7 +8,7 @@ require('dotenv').config();
 app.get('/api/location/:id', async(req, res) =>{
   
    
-     const result = await IPLocate.Locate(req.params.id);
+     const result = await IPLocate.IPModule.Locate(req.params.id);
   
   res.send(result);
 });
@@ -24,8 +24,12 @@ app.get('/api/locations/noip', async(req, res) =>{
    
   let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   ip = ip.toString().replace('::ffff:', '');  
-  const result = await IPLocate.Locate(ip);
+  const result = await IPLocate.IPModule.Locate(ip);
   
+  res.send(result);
+});
+app.get('/api/countries/get/all', async(req,res)=>{
+  let result = await IPLocate.IPModule.getAllCountry();
   res.send(result);
 });
 app.get('/api/universities/get/all', async(req,res)=>{
