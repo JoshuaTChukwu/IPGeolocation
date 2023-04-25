@@ -94,6 +94,21 @@ async function Locate(IP){
 }
     //console.log(IPaddress);
 }
+async function getOneCountry(code){
+    var country = await IPAddress.findOne({CountryCode: code});
+    if(country){
+        const curr = await Currency.findOne({CountryCode:code});
+        const response = {
+            Country:country.Country,
+      CountryCode:code,
+      CurrencySymbol: getsymbol(curr),
+      CurrencyCode:curr?.CurrencyCode??"",
+      CurrencyName: curr?.Currency??"" 
+        }
+        return response
+    }
+    return {};
+}
 async function getAllCountry(){
    var item =  await IPAddress.aggregate([{ $group:{
         _id: "$Country",
@@ -195,7 +210,8 @@ return parseInt(str,2)
 const IPModule = {
     Locate,
     getAllCountry,
-    getCityByCountry
+    getCityByCountry,
+    getOneCountry
 }
 
 module.exports.IPModule= IPModule;
