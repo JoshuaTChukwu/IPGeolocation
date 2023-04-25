@@ -92,7 +92,7 @@ async function Locate(IP){
        }
    }
 }
-    //console.log(IPaddress);
+    
 }
 async function getOneCountry(code){
     var country = await IPAddress.findOne({CountryCode: code});
@@ -125,7 +125,7 @@ async function getAllCountry(){
     }], function (err, result) {
         if(result){
             return result;
-            console.log(result);
+            
         }
         else{
             return [];
@@ -140,7 +140,7 @@ async function getAllCountry(){
       CurrencyName: a.test[0]?.Currency??""
       }
     });
-    console.log(res);
+    
     return res;
 }
 function getsymbol(data){

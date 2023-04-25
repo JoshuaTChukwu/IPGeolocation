@@ -46,7 +46,7 @@ app.get('/api/universities/get/all', async(req,res)=>{
 });
 app.get('/api/universities/get/countryCode/:code', async(req, res) =>{
   
-  console.log(req.params.code); 
+   
   const result = await University.UniversityModule.getUniversitiesByCountry(req.params.code);
 
 res.send(result);
