@@ -169,6 +169,18 @@ async function getCityByCountry(code){
    
     return fomatedCity;
 }
+async function getOneCurrency(code){
+    const curr = await Currency.findOne({CurrencyCode:code});
+    if(curr){
+      const symbol = getsymbol(curr);
+      return {
+        CurrencyName: curr.Currency,
+        CurrencySymbol:symbol,
+        CurrencyCode:code
+      }
+    }
+    return{};
+}
 
 //Locate('197.210.64.210')
 function GetLocation(IPaddresses){
@@ -211,7 +223,8 @@ const IPModule = {
     Locate,
     getAllCountry,
     getCityByCountry,
-    getOneCountry
+    getOneCountry,
+    getOneCurrency
 }
 
 module.exports.IPModule= IPModule;

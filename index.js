@@ -40,6 +40,10 @@ app.get('/api/country/get/one/by/country/:code', async(req,res)=>{
   let result = await IPLocate.IPModule.getOneCountry(req.params.code);
   res.send(result);
 });
+app.get('/api/currency/get/one/by/code/:code', async(req,res)=>{
+  let result = await IPLocate.IPModule.getOneCurrency(req.params.code);
+  res.send(result);
+});
 app.get('/api/universities/get/all', async(req,res)=>{
   let result = await University.UniversityModule.getAllUniversities();
   res.send(result);
